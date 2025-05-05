@@ -19,7 +19,7 @@ class UsersDashboardController extends Controller
         $intern = Auth::guard('intern')->user();
 
         // Fetch tasks assigned to the logged-in intern with the admin who created them
-        $tasks = $intern->tasks()->with('createdBy')->latest()->get();  // Use 'createdBy' instead of 'admin'
+        $tasks = $intern->tasks()->with('createdBy')->latest()->get();  
         
         return view('users.dashboard', compact('tasks'));
     }

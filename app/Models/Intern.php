@@ -23,5 +23,11 @@ class Intern extends Authenticatable
         return $this->belongsToMany(Task::class, 'intern_task', 'intern_id', 'task_id')
                     ->withTimestamps();
     }
+
+    public function comments()
+{
+    return $this->morphMany(Comment::class, 'commentable');
+}
+
     protected $hidden = ['password'];
 }

@@ -70,18 +70,21 @@ class UserAuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            
+            // Logout the intern guard
             Auth::guard('intern')->logout();
     
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+            // Forget the intern's session data
+          
     
+            // Redirect to the intern login page
             return redirect()->route('intern.login')->with('success', 'You have been logged out.');
         } catch (\Exception $e) {
+            // Log error in case of failure
             \Log::error('Intern Logout Failed: ' . $e->getMessage());
     
             return redirect()->back()->with('error', 'Something went wrong during logout. Please try again.');
         }
     }
+    
     
 }

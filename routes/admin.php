@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\Admin\AdminAuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\AdminDashboardController;
 use  App\Http\Controllers\Admin\TaskController;
-
+use App\Http\Controllers\Users\InternCommentController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
@@ -24,4 +24,5 @@ Route::middleware('auth:admin')->group(function(){
     Route::get('admin/tasks/{task}/edit', [TaskController::class, 'edit'])->name('admin.tasks.edit');
     Route::put('admin/tasks/{task}', [TaskController::class, 'update'])->name('admin.tasks.update');
     Route::delete('admin/tasks/{task}', [TaskController::class, 'destroy'])->name('admin.tasks.destroy');
+    Route::get('/intern/comments/{taskId}', [InternCommentController::class, 'showComments']);
 });

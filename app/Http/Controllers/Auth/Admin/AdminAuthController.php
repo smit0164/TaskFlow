@@ -39,8 +39,8 @@ class AdminAuthController extends Controller
     {
         try {
             Auth::guard('admin')->logout();
-            $request->session()->forget('admin_auth');
-            $request->session()->regenerateToken();
+            
+          
             return redirect()->route('admin.login')->with('success', 'Logged out successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to logout. Please try again.');

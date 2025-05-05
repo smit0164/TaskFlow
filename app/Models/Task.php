@@ -26,4 +26,9 @@ class Task extends Model
         return $this->belongsToMany(Intern::class, 'intern_task', 'task_id', 'intern_id')
                     ->withTimestamps();
     }
+    public function comments()
+{
+    return $this->hasMany(Comment::class);
+}
+
 }
