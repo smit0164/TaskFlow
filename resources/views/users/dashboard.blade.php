@@ -1,50 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
+@extends('layouts.intern')
 
-    <nav class="bg-green-600 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl">TaskFlow User</h1>
+@section('title', 'Intern Dashboard')
+@section('heading', 'My Assigned Tasks')
 
-            <!-- Logout Form -->
-            <form method="POST" action="{{ route('intern.logout') }}">
-                @csrf
-                <button type="submit" class="bg-green-800 hover:bg-green-700 text-white px-4 py-2 rounded">
-                    Logout
-                </button>
-            </form>
-        </div>
-    </nav>
+@section('content')
+    @if($tasks->count())
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($tasks as $task)
+                <div class="bg-white rounded-xl shadow p-5 border-l-4 border-blue-500 hover:shadow-lg transition-all">
+                    <h2 class="text-lg font-semibold text-blue-600">{{ $task->title }}</h2>
+                    <p class="text-sm text-gray-600 mt-2">{{ $task->description }}</p>
 
-    <div class="flex">
-        <!-- Sidebar for user -->
-        <div class="w-1/4 bg-green-200 p-4">
-            <ul>
-                <li><a href="" class="text-green-800">Dashboard</a></li>
-                <li><a href="#" class="text-green-800">My Tasks</a></li>
-                <li><a href="#" class="text-green-800">Profile</a></li>
-            </ul>
-        </div>
+                    <div class="mt-4 text-sm text-gray-500">
+                        Created By: <span class="font-medium"> {{ $task->createdBy ? $task->createdBy->name : 'No Admin Found' }}</span>
+                    </div>
 
-        <main class="flex-grow">
-            <div class="container mx-auto p-4">
-                <h2 class="text-3xl font-bold text-gray-800">User Dashboard</h2>
-                <p class="mt-4 text-gray-600">Welcome to your User Dashboard!</p>
-
-                <div class="mt-8 bg-white p-6 shadow rounded-lg">
-                    <h2 class="text-xl font-semibold">Your Tasks</h2>
-                    <p class="text-gray-600">View the tasks you have been assigned.</p>
-                    <a href="#" class="mt-4 inline-block bg-green-600 text-white py-2 px-4 rounded">View Tasks</a>
+                    <div class="mt-2 flex justify-end">
+                        <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">Task ID: {{ $task->id }}</span>
+                    </div>
                 </div>
-            </div>
-        </main>
-    </div>
-
-</body>
-</html>
+            @endforeach
+        </div>
+    @else
+        <p class="text-gray-600">You have no assigned tasks at the moment.</p>
+    @endif
+@endsection

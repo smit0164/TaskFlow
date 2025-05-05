@@ -18,5 +18,10 @@ class Intern extends Authenticatable
     }
     
     // Intern authentication
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'intern_task', 'intern_id', 'task_id')
+                    ->withTimestamps();
+    }
     protected $hidden = ['password'];
 }

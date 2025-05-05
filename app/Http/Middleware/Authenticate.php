@@ -25,7 +25,7 @@ class Authenticate
                 return redirect()->route('intern.login');
             } 
         }
-
+        
         return $next($request);
     }
 }
