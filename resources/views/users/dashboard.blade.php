@@ -9,7 +9,7 @@
 <!-- Show Admins Button -->
 <div class="mb-6 text-right">
     <button onclick="fetchAdmins()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-        Show Admin List
+        Chat with Admin
     </button>
 </div>
 

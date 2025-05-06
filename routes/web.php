@@ -29,8 +29,5 @@ Route::middleware("auth:intern")->group(function(){
 
     // Fetch messages for the intern (by admin_id)
     Route::get('intern/messages/fetch/{admin_id}', [MessageController::class, 'fetch'])->name('intern.messages.fetch');
-    
-
-
 });
 require __DIR__ . '/admin.php';

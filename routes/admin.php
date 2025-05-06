@@ -26,12 +26,15 @@ Route::middleware('auth:admin')->group(function(){
      Route::post('/admin/logout',[AdminAuthController::class, 'logout'])->name('admin.logout');
     
      Route::middleware('can:manage-tasks')->group(function () {
-        Route::get('admin/tasks', [TaskController::class, 'index'])->name('admin.tasks.index');
-        Route::get('admin/tasks/create', [TaskController::class, 'create'])->name('admin.tasks.create');
-        Route::post('/tasks', [TaskController::class, 'store'])->name('admin.tasks.store');
-        Route::get('admin/tasks/{task}/edit', [TaskController::class, 'edit'])->name('admin.tasks.edit');
-        Route::put('admin/tasks/{task}', [TaskController::class, 'update'])->name('admin.tasks.update');
-        Route::delete('admin/tasks/{task}', [TaskController::class, 'destroy'])->name('admin.tasks.destroy');
+        Route::prefix('admin/tasks')->name('admin.tasks.')->group(function () {
+            Route::get('/', [TaskController::class, 'index'])->name('index');
+            Route::get('/create', [TaskController::class, 'create'])->name('create');
+            Route::post('/', [TaskController::class, 'store'])->name('store');
+            Route::get('/{task}/edit', [TaskController::class, 'edit'])->name('edit');
+            Route::put('/{task}', [TaskController::class, 'update'])->name('update');
+            Route::delete('/{task}', [TaskController::class, 'destroy'])->name('destroy');
+        });
+        
     });
     
   
@@ -39,29 +42,38 @@ Route::middleware('auth:admin')->group(function(){
 
     
     Route::middleware(['can:manage-interns'])->group(function () {
-        Route::get('/admin/interns', [InternController::class, 'index'])->name('admin.interns.index');
-        Route::get('/admin/interns/create', [InternController::class, 'create'])->name('admin.interns.create');
-        Route::post('/admin/interns', [InternController::class, 'store'])->name('admin.interns.store');
-        Route::get('/admin/interns/{id}/edit', [InternController::class, 'edit'])->name('admin.interns.edit');
-        Route::put('/admin/interns/{id}', [InternController::class, 'update'])->name('admin.interns.update');
-        Route::delete('/admin/interns/{id}', [InternController::class, 'destroy'])->name('admin.interns.destroy');
+        Route::prefix('admin/interns')->name('admin.interns.')->group(function () {
+            Route::get('/', [InternController::class, 'index'])->name('index');
+            Route::get('/create', [InternController::class, 'create'])->name('create');
+            Route::post('/', [InternController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [InternController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [InternController::class, 'update'])->name('update');
+            Route::delete('/{id}', [InternController::class, 'destroy'])->name('destroy');
+        });
+        
     });
     
 
     Route::middleware(['can:manage-roles'])->group(function () {
-        Route::get('admin/roles/create', [RoleController::class, 'create'])->name('admin.roles.create');
-        Route::post('admin/roles', [RoleController::class, 'store'])->name('admin.roles.store');
-        Route::get('/admin/roles', [RoleController::class, 'index'])->name('admin.roles.index');
-        Route::get('/admin/roles/{role}/edit', [RoleController::class, 'edit'])->name('admin.roles.edit');
-        Route::put('/admin/roles/{role}', [RoleController::class, 'update'])->name('admin.roles.update');
-        Route::delete('/admin/roles/{role}', [RoleController::class, 'destroy'])->name('admin.roles.destroy');
+        Route::prefix('admin/roles')->name('admin.roles.')->group(function () {
+            Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::get('/create', [RoleController::class, 'create'])->name('create');
+            Route::post('/', [RoleController::class, 'store'])->name('store');
+            Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
+            Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+            Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
+        });
+        
     });
     
     
-Route::get('/admin/messages', [MessageController::class, 'index'])->name('admin.messages.index');
-Route::get('/chat/intern/{id}', [MessageController::class, 'openChat'])->name('admin.messages.chat');
-Route::post('admin/messages/store', [MessageController::class, 'store'])->name('admin.messages.store');
-Route::get('/admin/messages/fetch/{intern_id}', [MessageController::class, 'fetch'])->name('admin.messages.fetch');
+    Route::prefix('admin/messages')->name('admin.messages.')->group(function () {
+        Route::get('/', [MessageController::class, 'index'])->name('index');
+        Route::get('/chat/intern/{id}', [MessageController::class, 'openChat'])->name('chat');
+        Route::post('/store', [MessageController::class, 'store'])->name('store');
+        Route::get('/fetch/{intern_id}', [MessageController::class, 'fetch'])->name('fetch');
+    });
+    
 
     Route::middleware(['can:manage-users'])->prefix('admin/users')->name('admin.users.')->group(function () {
         Route::get('/', [ManageUserController::class, 'index'])->name('index');

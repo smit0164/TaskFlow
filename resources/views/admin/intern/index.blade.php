@@ -76,7 +76,7 @@
 </div>
 
 
-<!-- <script>
+<script>
     // Open delete modal and set correct intern ID and name
    // Open delete modal and set correct intern ID, name, and email
 document.querySelectorAll('.delete-intern').forEach(button => {
@@ -114,6 +114,6 @@ document.querySelectorAll('.delete-intern').forEach(button => {
             document.getElementById('deleteModal').classList.add('hidden');
         }
     });
-</script> -->
+</script>
 
 @endsection
