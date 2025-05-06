@@ -3,7 +3,7 @@
 use App\Http\Controllers\Auth\Users\UserAuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\UsersDashboardController;
-use App\Http\Controllers\Users\InternCommentController;
+use App\Http\Controllers\Comment\CommentController;
 // User authentication routes
 
 
@@ -20,6 +20,6 @@ Route::middleware("guest:intern")->group(function () {
 Route::middleware("auth:intern")->group(function(){
     Route::post('logout',[UserAuthController::class, 'logout'])->name('intern.logout');
     Route::get('/',[UsersDashboardController::class,'index'])->name('intern.dashbaord');
-    Route::post('/comment/store', [InternCommentController::class, 'store'])->name('intern.comment.store');
+    Route::post('/comment/store', [CommentController::class, 'store'])->name('intern.comment.store');
 });
 require __DIR__ . '/admin.php';

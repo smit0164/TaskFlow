@@ -12,13 +12,18 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
-        // Get currently logged-in admin using guard
         $admin = Auth::guard('admin')->user();
 
-        // Get tasks created by this admin
-        $tasks = Task::where('created_by', $admin->id)->with('interns')->latest()->get();
+        // Check if the admin has 'super-admin' permission
+        if ($admin->isSuperAdmin()) {
+            // If the admin is super-admin, fetch all tasks
+            $tasks = Task::with('interns')->latest()->get();
+        } else {
+            // If the admin is not super-admin, fetch only tasks created by this admin
+            $tasks = Task::where('created_by', $admin->id)->with('interns')->latest()->get();
+        }
+    
 
-        // Get all interns
         $interns = Intern::latest()->get();
 
         return view('admin.dashboard', compact('tasks', 'interns'));

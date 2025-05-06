@@ -1,21 +1,24 @@
 <?php
 
+// app/Models/Role.php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    use HasFactory;
+    // app/Models/Role.php
 
-    protected $fillable = ['name'];
+protected $fillable = ['name', 'is_super'];
 
-    // One-to-many relationship with Admin
-    public function admins()
+    
+
+    // Role can have many permissions
+    public function permissions()
     {
-        return $this->hasMany(Admin::class);
+        return $this->belongsToMany(Permission::class, 'role_permission');
     }
 
-   
+    // You may also want to define other relationships like users etc.
 }

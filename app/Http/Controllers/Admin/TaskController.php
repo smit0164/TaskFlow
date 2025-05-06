@@ -12,11 +12,21 @@ class TaskController extends Controller
 {
     public function index()
     {
-        // Fetch all tasks with their assigned interns
-        $tasks = Task::with('interns')->latest()->get();
+        // Get current authenticated admin ID using admin guard
+        //$adminId = auth()->guard('admin')->id();
+        $tasks = Task::with('interns')
+        ->latest()
+        ->get();
+
+        // Fetch tasks created by this admin
+        // $tasks = Task::with('interns')
+        //             ->where('created_by', $adminId)
+        //             ->latest()
+        //             ->get();
     
         return view('admin.tasks.index', compact('tasks'));
     }
+    
 
     public function create()
     {

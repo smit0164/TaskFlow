@@ -19,34 +19,39 @@
             </a>
         </div>
 
-        <table class="w-full text-left">
-            <thead>
-                <tr class="border-b">
-                    <th class="py-2 text-gray-700">Task Name</th>
-                    <th class="py-2 text-gray-700">Assigned To</th>
-                    <th class="py-2 text-gray-700 text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Loop through the tasks and display each task -->
-                @foreach ($tasks as $task)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="py-3">{{ $task->title }}</td>
-                        <td class="py-3">
-                            <!-- Loop through assigned interns -->
-                            @foreach($task->interns as $intern)
-                                <span class="text-sm">{{ $intern->name }}</span><br>
-                            @endforeach
-                        </td>
-                        <td class="py-3 text-center">
-                            <a href="{{ route('admin.tasks.edit', $task->id) }}" class="text-blue-600 hover:underline">Edit</a>
-                            <!-- Delete Button -->
-                            <button onclick="openDeleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')" class="text-red-600 hover:underline ml-4">Delete</button>
-                        </td>
+        <!-- Check if there are any tasks for this admin -->
+        @if($tasks->isEmpty())
+            <p class="text-center text-gray-600 py-6">No tasks have been created.</p>
+        @else
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b">
+                        <th class="py-2 text-gray-700">Task Name</th>
+                        <th class="py-2 text-gray-700">Assigned To</th>
+                        <th class="py-2 text-gray-700 text-center">Actions</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <!-- Loop through the tasks and display each task -->
+                    @foreach ($tasks as $task)
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3">{{ $task->title }}</td>
+                            <td class="py-3">
+                                <!-- Loop through assigned interns -->
+                                @foreach($task->interns as $intern)
+                                    <span class="text-sm">{{ $intern->name }}</span><br>
+                                @endforeach
+                            </td>
+                            <td class="py-3 text-center">
+                                <a href="{{ route('admin.tasks.edit', $task->id) }}" class="text-blue-600 hover:underline">Edit</a>
+                                <!-- Delete Button -->
+                                <button onclick="openDeleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')" class="text-red-600 hover:underline ml-4">Delete</button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
     </div>
 
 </div>
@@ -90,3 +95,4 @@
         modal.classList.add('hidden');
     }
 </script>
+

@@ -2,26 +2,27 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'type',
-        'task_id',
-        'content',
-    ];
+    use HasFactory;
 
-    // Relationship to the Task
+    protected $fillable = ['commenter_id', 'commenter_type', 'user_type', 'task_id', 'description'];
+
+    public function commenter()
+    {
+        return $this->morphTo();
+    }
+
     public function task()
     {
         return $this->belongsTo(Task::class);
     }
 
-    // Relationship to Admin or Intern based on type
-    public function user()
+    public function isAdminComment()
     {
-        return $this->morphTo(null, 'type', 'user_id');
+        return $this->user_type === 'admin';
     }
 }

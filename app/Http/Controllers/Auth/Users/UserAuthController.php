@@ -21,7 +21,6 @@ class UserAuthController extends Controller
             $credentials = $request->validated();
           
             if (Auth::guard('intern')->attempt($credentials)) {
-                $request->session()->regenerate();
                 return redirect()->intended(route('/'));
             }
             
@@ -73,18 +72,18 @@ class UserAuthController extends Controller
             // Logout the intern guard
             Auth::guard('intern')->logout();
     
-            // Forget the intern's session data
-          
+            $request->session()->regenerateToken();
     
             // Redirect to the intern login page
             return redirect()->route('intern.login')->with('success', 'You have been logged out.');
         } catch (\Exception $e) {
-            // Log error in case of failure
+            // Log the error for debugging
             \Log::error('Intern Logout Failed: ' . $e->getMessage());
     
             return redirect()->back()->with('error', 'Something went wrong during logout. Please try again.');
         }
     }
+    
     
     
 }

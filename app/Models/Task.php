@@ -23,8 +23,7 @@ class Task extends Model
     // Many-to-many relationship with User model through the intern_task pivot table
     public function interns()
     {
-        return $this->belongsToMany(Intern::class, 'intern_task', 'task_id', 'intern_id')
-                    ->withTimestamps();
+        return $this->belongsToMany(Intern::class, 'intern_task', 'task_id', 'intern_id');
     }
     public function comments()
 {

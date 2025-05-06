@@ -20,8 +20,7 @@ class Intern extends Authenticatable
     // Intern authentication
     public function tasks()
     {
-        return $this->belongsToMany(Task::class, 'intern_task', 'intern_id', 'task_id')
-                    ->withTimestamps();
+        return $this->belongsToMany(Task::class, 'intern_task', 'intern_id', 'task_id');
     }
 
     public function comments()
