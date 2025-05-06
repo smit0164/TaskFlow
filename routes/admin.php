@@ -9,7 +9,7 @@ use App\Http\Controllers\Comment\CommentController;
 use App\Http\Controllers\Admin\InternController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ManageUserController;
-
+use App\Http\Controllers\Admin\MessageController;
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
         Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
@@ -56,9 +56,13 @@ Route::middleware('auth:admin')->group(function(){
         Route::put('/admin/roles/{role}', [RoleController::class, 'update'])->name('admin.roles.update');
         Route::delete('/admin/roles/{role}', [RoleController::class, 'destroy'])->name('admin.roles.destroy');
     });
-
-
     
+    
+Route::get('/admin/messages', [MessageController::class, 'index'])->name('admin.messages.index');
+Route::get('/chat/intern/{id}', [MessageController::class, 'openChat'])->name('admin.messages.chat');
+Route::post('admin/messages/store', [MessageController::class, 'store'])->name('admin.messages.store');
+Route::get('/admin/messages/fetch/{intern_id}', [MessageController::class, 'fetch'])->name('admin.messages.fetch');
+
     Route::middleware(['can:manage-users'])->prefix('admin/users')->name('admin.users.')->group(function () {
         Route::get('/', [ManageUserController::class, 'index'])->name('index');
         Route::get('/create', [ManageUserController::class, 'create'])->name('create');

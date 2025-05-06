@@ -6,6 +6,31 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-8">
    
+<!-- Show Admins Button -->
+<div class="mb-6 text-right">
+    <button onclick="fetchAdmins()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+        Show Admin List
+    </button>
+</div>
+
+<!-- Admin List Display -->
+<div id="adminListContainer" class="hidden mb-6 bg-white p-6 rounded-2xl shadow-md border border-gray-200">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800 flex items-center space-x-2">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-3-3.87M4 21v-2a4 4 0 013-3.87m13-4.13a4 4 0 11-8 0 4 4 0 018 0zM6 10a4 4 0 108 0 4 4 0 00-8 0z" />
+            </svg>
+            <span>Admin List</span>
+        </h3>
+        <!-- Cancel Button -->
+        <button onclick="toggleAdminList()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+            Cancel
+        </button>
+    </div>
+    <ul id="adminList" class="space-y-3">
+        <!-- Admin items will be appended here -->
+    </ul>
+</div>
 
     @if($tasks->count())
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -97,4 +122,50 @@
         </div>
     @endif
 </div>
+
+<script>
+function fetchAdmins() {
+    fetch('{{ route("intern.admins") }}')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            const adminList = document.getElementById('adminList');
+            const adminContainer = document.getElementById('adminListContainer');
+            adminList.innerHTML = '';
+
+            if (data.length === 0) {
+                adminList.innerHTML = '<li>No admins found.</li>';
+            } else {
+                data.forEach(admin => {
+                    const listItem = document.createElement('li');
+                    listItem.className = "py-2 flex items-center justify-between text-sm text-gray-700";
+                    
+                    // Construct the route for the chat button dynamically
+                    const chatLink = `/chat/admin/${admin.id}`;
+
+                    listItem.innerHTML = `
+                        <span class="font-medium text-gray-800">${admin.name}</span>
+                        <span class="text-gray-500">${admin.email}</span>
+                        <a href="${chatLink}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm font-medium transition-colors duration-200">
+                            Chat
+                        </a>
+                    `;
+                    adminList.appendChild(listItem);
+                });
+            }
+
+            adminContainer.classList.remove('hidden');
+        })
+        .catch(error => {
+            alert("Failed to load admins.");
+            console.error(error);
+        });
+}
+
+    function toggleAdminList() {
+        const adminContainer = document.getElementById('adminListContainer');
+        adminContainer.classList.add('hidden');
+    }
+</script>
+
 @endsection

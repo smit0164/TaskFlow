@@ -45,5 +45,14 @@
             </a>
         </li>
         @endcan
+
+        
+        <li>
+            <a href="{{ route('admin.messages.index') }}"
+               class="flex items-center p-2 rounded-lg transition hover:bg-blue-100 {{ Route::is('admin.messages.*') ? 'bg-blue-200 text-blue-900 font-semibold' : 'text-gray-700' }}">
+                <span>Messages</span>
+            </a>
+        </li>
+        
     </ul>
 </div>

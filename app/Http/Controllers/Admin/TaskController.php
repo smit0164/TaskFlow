@@ -7,25 +7,26 @@ use Illuminate\Http\Request;
 use App\Models\Intern;
 use App\Models\Task;
 use App\Http\Requests\TaskRequest;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
     public function index()
     {
-        // Get current authenticated admin ID using admin guard
-        //$adminId = auth()->guard('admin')->id();
-        $tasks = Task::with('interns')
-        ->latest()
-        ->get();
-
-        // Fetch tasks created by this admin
-        // $tasks = Task::with('interns')
-        //             ->where('created_by', $adminId)
-        //             ->latest()
-        //             ->get();
+        $admin = Auth::guard('admin')->user();
+    
+        // Check if the admin has 'super-admin' permission
+        if ($admin->isSuperAdmin()) {
+            // If the admin is super-admin, fetch all tasks
+            $tasks = Task::with('interns')->latest()->get();
+        } else {
+            // If not super-admin, fetch only tasks created by this admin
+            $tasks = Task::where('created_by', $admin->id)->with('interns')->latest()->get();
+        }
     
         return view('admin.tasks.index', compact('tasks'));
     }
+    
     
 
     public function create()
