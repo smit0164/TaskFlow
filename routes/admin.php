@@ -18,11 +18,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 });
 Route::middleware('auth:admin')->group(function(){
-    Route::get('/admin', [AdminDashboardController::class, 'index'])
-    ->middleware('can:manage-dashboard')
-    ->name('admin.dashboard');
-
-   
+    Route::get('/admin', [AdminDashboardController::class, 'index'])->middleware('can:manage-dashboard')->name('admin.dashboard');
+    
      Route::post('/admin/logout',[AdminAuthController::class, 'logout'])->name('admin.logout');
     
      Route::middleware('can:manage-tasks')->group(function () {

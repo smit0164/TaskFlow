@@ -7,7 +7,7 @@ use App\Models\Message;
 use App\Models\Intern;
 use App\Jobs\SendMessage;
 use App\Models\Admin;
-
+use Illuminate\Support\Facades\Auth;
 class MessageController extends Controller
 {
     public function index()
@@ -21,18 +21,14 @@ class MessageController extends Controller
     }
     public function show($admin_id)
     {
-        // Fetch the admin details
         $admin = Admin::findOrFail($admin_id);
     
-        $intern_id = auth('intern')->id(); // Use the correct guard
-    
-        // Fetch messages where this specific intern and admin are chatting
+        $intern_id = Auth::guard('intern')->id();
         $messages = Message::where('admin_id', $admin_id)
                             ->where('intern_id', $intern_id)
                             ->orderBy('created_at', 'asc')
                             ->get();
-    
-        // Pass the admin and messages to the view
+
         return view('users.messages.chat', compact('messages', 'admin_id', 'admin'));
     }
     public function openChatAdminIntern($id)

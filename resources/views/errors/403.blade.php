@@ -1,4 +1,4 @@
-@extends('layouts.admin') {{-- Or your layout --}}
+@extends('layouts.admin') 
 
 @section('title', 'Access Denied')
 

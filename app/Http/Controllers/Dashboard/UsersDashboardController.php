@@ -17,17 +17,15 @@ class UsersDashboardController extends Controller
     public function index()
     {
         $intern = Auth::guard('intern')->user();
-
-        // Fetch tasks assigned to the logged-in intern with the admin who created them
         $tasks = $intern->tasks()->with('createdBy')->latest()->get();  
-        
         return view('users.dashboard', compact('tasks'));
     }
     public function getAdmins()
-{
-    $admins = Admin::select('name', 'email','id')->get();
-    return response()->json($admins);
-}
+    {
+        $admins = Admin::select('name', 'email','id')->get();
+        return view('users.messages.index',compact('admins'));
+        
+    }
 
     
 }

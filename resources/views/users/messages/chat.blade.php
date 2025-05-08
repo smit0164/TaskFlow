@@ -1,21 +1,35 @@
 @extends('layouts.intern')
 
+@section('title', 'TaskFlow – Chat with Admin')
+@section('heading', 'Chat with Admin')
+
 @section('content')
-<div class="container mx-auto px-4 py-8 max-w-3xl min-h-screen flex flex-col">
+<div class="w-full max-w-xl mx-auto px-4 py-8 min-h-screen flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-3xl font-semibold text-gray-800">Chat with {{ $admin->name }}</h1>
-        <a href="{{ route('intern.dashboard') }}" class="text-sm text-blue-600 hover:underline">← Back to Dashboard</a>
+        <h1 class="text-3xl font-bold text-indigo-700 flex items-center">
+            <i class="fas fa-comments mr-2 text-indigo-600"></i>
+            Chat with {{ $admin->name }}
+        </h1>
+        <a href="{{ route('intern.getAdmins') }}"
+           class="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-300 hover:shadow-sm transition duration-200 flex items-center">
+            <i class="fas fa-arrow-left mr-1"></i> Back
+        </a>
     </div>
 
     <!-- Admin Details -->
-    <div class="bg-white border border-gray-200 shadow rounded-lg p-4 mb-6">
-        <p class="text-lg font-semibold text-gray-800">Name: <span class="font-normal">{{ $admin->name }}</span></p>
-        <p class="text-lg font-semibold text-gray-800">Email: <span class="font-normal">{{ $admin->email }}</span></p>
+    <div class="bg-white border border-gray-200 shadow-md rounded-xl p-4 mb-6">
+        <div class="flex items-center border-b border-indigo-100 pb-2 mb-2">
+            <i class="fas fa-user-circle text-3xl text-indigo-600 mr-3"></i>
+            <h2 class="text-lg font-semibold text-gray-800">Admin Details</h2>
+        </div>
+        <p class="text-sm text-gray-700">Name: <span class="font-medium">{{ $admin->name }}</span></p>
+        <p class="text-sm text-gray-700">Email: <span class="font-medium">{{ $admin->email }}</span></p>
     </div>
 
     <!-- Chat Messages Box -->
-    <div id="chat-box" class="bg-gray-50 shadow-inner border border-gray-200 rounded-lg p-4 overflow-y-auto flex-1 mb-4 space-y-3 max-h-[400px]">
+    <div id="chat-box"
+         class="bg-gradient-to-b from-gray-50 to-gray-100 shadow-inner border border-gray-200 rounded-xl p-6 overflow-y-auto flex-1 mb-4 space-y-4 max-h-[500px]">
         <!-- Messages will be dynamically loaded here -->
     </div>
 
@@ -23,7 +37,7 @@
     <form id="messageForm"
           action="{{ route('intern.messages.store') }}"
           method="POST"
-          class="bg-white shadow-lg rounded-lg border border-gray-200 px-4 py-3 flex items-center gap-3 sticky bottom-0"
+          class="bg-white shadow-md rounded-full border border-gray-200 px-4 py-3 flex items-center gap-3 sticky bottom-0"
           data-admin-id="{{ $admin->id }}"
           data-intern-id="{{ auth()->guard('intern')->id() }}">
         @csrf
@@ -33,15 +47,14 @@
 
         <input type="text" name="message" id="messageInput"
                placeholder="Type your message..."
-               class="flex-1 bg-gray-100 text-gray-800 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"/>
+               class="flex-1 bg-white text-gray-800 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none"/>
 
         <button type="submit" id="sendButton"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full transition focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
-            Send
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full transition focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 hover:scale-105 transform">
+            <i class="fas fa-paper-plane"></i>
         </button>
     </form>
 </div>
-
 
 <!-- JavaScript for AJAX and Broadcasting -->
 <script>
@@ -59,12 +72,6 @@ $(document).ready(function () {
     const $messageInput = $('#messageInput');
 
     if (!$chatBox.length || !$form.length || !$sendButton.length || !$messageInput.length) {
-        console.error('DOM elements missing:', {
-            chatBox: $chatBox[0],
-            form: $form[0],
-            sendButton: $sendButton[0],
-            messageInput: $messageInput[0]
-        });
         return;
     }
 
@@ -88,10 +95,10 @@ $(document).ready(function () {
                     data.messages.forEach(function (message) {
                         const isIntern = message.sender_type === 'intern';
                         const bubble = `
-                            <div class="flex ${isIntern ? 'justify-end' : 'justify-start'} mb-4">
-                                <div class="${isIntern ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'} p-3 rounded-lg max-w-xs sm:max-w-sm">
+                            <div class="flex ${isIntern ? 'justify-end' : 'justify-start'} mb-4 animate-fade">
+                                <div class="${isIntern ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'} p-3 rounded-lg max-w-xs sm:max-w-sm">
                                     <p>${message.message}</p>
-                                    <p class="text-[11px] ${isIntern ? 'text-blue-200' : 'text-gray-500'} text-right mt-1">${message.time}</p>
+                                    <p class="text-[11px] ${isIntern ? 'text-indigo-200' : 'text-gray-500'} text-right mt-1">${message.time}</p>
                                 </div>
                             </div>`;
                         $chatBox.append(bubble);
@@ -160,5 +167,4 @@ $(document).ready(function () {
     fetchMessages();
 });
 </script>
-
 @endsection
