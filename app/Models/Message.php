@@ -22,4 +22,9 @@ class Message extends Model
     {
         return $this->belongsTo(Intern::class);
     }
+    protected $appends = ['time'];
+    public function getTimeAttribute()
+    {
+        return $this->created_at->diffForHumans();
+    }
 }

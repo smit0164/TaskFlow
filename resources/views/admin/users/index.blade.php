@@ -56,30 +56,36 @@
             @csrf
             @method('DELETE')
             <div class="flex justify-end space-x-4">
-                <button type="button" onclick="closeDeleteModal()" class="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
+                <button type="button" id="closeModalBtn" class="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
                 <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
             </div>
         </form>
     </div>
 </div>
 
+
 <script>
     function openDeleteModal(userId, userName, userEmail) {
         // Set the action URL for the delete form dynamically
         var deleteUrl = '/admin/users/' + userId;
-        document.getElementById('deleteForm').action = deleteUrl;
+        $('#deleteForm').attr('action', deleteUrl);
 
         // Set the user's name and email in the modal
-        document.getElementById('userName').innerText = "Name: " + userName;
-        document.getElementById('userEmail').innerText = "Email: " + userEmail;
+        $('#userName').text("Name: " + userName);
+        $('#userEmail').text("Email: " + userEmail);
 
         // Show the modal
-        document.getElementById('deleteModal').classList.remove('hidden');
+        $('#deleteModal').removeClass('hidden');
     }
 
     function closeDeleteModal() {
         // Hide the modal
-        document.getElementById('deleteModal').classList.add('hidden');
+        $('#deleteModal').addClass('hidden');
     }
+
+    // jQuery click event for closing the modal
+    $('#closeModalBtn').on('click', function() {
+        closeDeleteModal();
+    });
 </script>
 @endsection

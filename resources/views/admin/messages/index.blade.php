@@ -21,9 +21,12 @@
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $intern->name }}</h3>
                 
                 <!-- Chat Button -->
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none">
-                    <a href="{{ route('admin.messages.chat', $intern->id) }}">Chat</a>
-                </button>
+                <a href="{{ route('admin.message.chat', $intern->id) }}">
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none">
+                        Chat
+                    </button>
+                </a>
+
             </div>
         @endforeach
     </div>

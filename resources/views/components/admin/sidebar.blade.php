@@ -1,4 +1,4 @@
-<div class="w-64 bg-white shadow-lg p-5 min-h-screen border-r border-gray-200">
+<div class="w-50% bg-white shadow-lg p-5 min-h-screen border-r border-gray-200">
     <h3 class="text-xl font-bold text-blue-900 mb-6">Admin Panel</h3>
     <ul class="space-y-3 text-sm font-medium">
         @can('manage-dashboard')

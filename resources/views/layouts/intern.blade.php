@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'User Dashboard')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @vite('resources/css/app.css') {{-- or link to Tailwind CSS --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src=
+"https://code.jquery.com/jquery-3.7.1.min.js" 
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
+        crossorigin="anonymous">
+    </script>
+     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    @vite(['resources/css/app.css','resources/js/app.js', 'resources/js/bootstrap.js']) {{-- or link to Tailwind CSS --}}
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800">
 
@@ -33,6 +40,10 @@
 
         @yield('content')
     </div>
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Intern layout loaded, Echo status:', window.Echo);
+    });
+</script>
 </body>
 </html>

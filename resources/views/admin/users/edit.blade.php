@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-xl mx-auto mt-8 bg-white p-6 rounded shadow">
-    <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
+    <form id="edit-user-form" method="POST" action="{{ route('admin.users.update', $user->id) }}">
         @csrf
         @method('PUT')
 
@@ -61,4 +61,81 @@
         </div>
     </form>
 </div>
+
+
+
+<script>
+   $(document).ready(function() {
+    $("#edit-user-form").validate({
+        rules: {
+            name: {
+                required: true,
+                minlength: 3
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            password: {
+                minlength: 6,
+                checkPassword: function() {
+                    return $('[name="password"]').val() !== "";
+                }
+            },
+            password_confirmation: {
+                minlength: 6,
+                equalTo: "[name='password']", // Use the correct selector here
+                required: function() {
+                    return $('[name="password"]').val() !== "";
+                }
+            },
+            role_id: {
+                required: true
+            }
+        },
+        messages: {
+            name: {
+                required: "Name is required",
+                minlength: "Name must be at least 3 characters long"
+            },
+            email: {
+                required: "Email is required",
+                email: "Please enter a valid email address"
+            },
+            password: {
+                minlength: "Password must be at least 6 characters long"
+            },
+            password_confirmation: {
+                minlength: "Password confirmation must be at least 6 characters long",
+                equalTo: "Password confirmation does not match",
+                required: "Password confirmation is required when updating the password"
+            },
+            role_id: {
+                required: "Please select a role"
+            }
+        },
+        errorClass: "text-red-500 text-sm mt-1",  // Error message styling
+        errorPlacement: function(error, element) {
+            error.insertAfter(element);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass("border-red-500").removeClass("border-green-500"); // Highlight the input field with red border
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass("border-red-500").addClass("border-green-500"); // Remove red border and add green border
+        }
+    });
+
+    // Custom method to check password if it's being updated
+    $.validator.addMethod("checkPassword", function(value, element) {
+        // If password is not empty, it must be at least 6 characters
+        if ($(element).val() !== "") {
+            return value.length >= 6;
+        }
+        return true; // Don't require password if not changing
+    });
+});
+
+</script>
+
 @endsection

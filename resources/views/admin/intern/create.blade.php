@@ -29,15 +29,15 @@
             <div class="task-input-group">
                 <label for="task_title[]" class="block text-sm font-medium text-gray-700">Task Title</label>
                 <input type="text" name="task_title[]" value="{{ old('task_title.0') }}"
-                       class="w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none @error('task_title.0') border-red-500 @enderror" placeholder="Enter task title">
+                       class="task-title w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none" placeholder="Enter task title">
                 @error('task_title.0')
-                    <span class="text-red-500 text-sm">task title is required </span>
+                    <span class="text-red-500 text-sm">task title is required</span>
                 @enderror
 
                 <label for="task_description[]" class="block text-sm font-medium text-gray-700 mt-2">Task Description</label>
-                <textarea name="task_description[]" class="w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none @error('task_description.0') border-red-500 @enderror" placeholder="Enter task description">{{ old('task_description.0') }}</textarea>
+                <textarea name="task_description[]" class="task-desc w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none" placeholder="Enter task description">{{ old('task_description.0') }}</textarea>
                 @error('task_description.0')
-                    <span class="text-red-500 text-sm">task descriptions is required </span>
+                    <span class="text-red-500 text-sm">task description is required</span>
                 @enderror
                 <button type="button" class="delete-task text-red-600 hover:text-red-800 mt-2">Delete</button>
             </div>
@@ -46,42 +46,80 @@
         <div class="flex justify-between items-center mt-4">
             <button type="button" id="add-task" class="text-blue-600 hover:text-blue-800">+ Add Task</button>
             <div class="flex gap-2">
-        <a href="{{ route('admin.interns.index') }}"
-           class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-4 py-2 rounded-lg shadow">
-            Cancel
-        </a>
-        <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow">
-            Add Intern
-        </button>
-    </div>
+                <a href="{{ route('admin.interns.index') }}"
+                   class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-4 py-2 rounded-lg shadow">
+                    Cancel
+                </a>
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow">
+                    Add Intern
+                </button>
+            </div>
         </div>
     </form>
 </div>
 
+{{-- jQuery and Validation --}}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
 <script>
-    // Add new task input dynamically
-    document.getElementById('add-task').addEventListener('click', function() {
-        const taskGroup = document.createElement('div');
-        taskGroup.classList.add('task-input-group', 'mt-4');
+    $(document).ready(function () {
+        // Add task dynamically
+        $('#add-task').on('click', function () {
+            const taskGroup = $(`
+                <div class="task-input-group mt-4">
+                    <label class="block text-sm font-medium text-gray-700">Task Title</label>
+                    <input type="text" name="task_title[]" class="task-title w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none" placeholder="Enter task title">
 
-        taskGroup.innerHTML = `
-            <label for="task_title[]" class="block text-sm font-medium text-gray-700">Task Title</label>
-            <input type="text" name="task_title[]" class="w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none" placeholder="Enter task title">
+                    <label class="block text-sm font-medium text-gray-700 mt-2">Task Description</label>
+                    <textarea name="task_description[]" class="task-desc w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none" placeholder="Enter task description"></textarea>
 
-            <label for="task_description[]" class="block text-sm font-medium text-gray-700 mt-2">Task Description</label>
-            <textarea name="task_description[]" class="w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-blue-200 focus:outline-none" placeholder="Enter task description"></textarea>
-            <button type="button" class="delete-task text-red-600 hover:text-red-800 mt-2">Delete</button>
-        `;
-        
-        document.getElementById('tasks-container').appendChild(taskGroup);
-    });
+                    <button type="button" class="delete-task text-red-600 hover:text-red-800 mt-2">Delete</button>
+                </div>
+            `);
+            $('#tasks-container').append(taskGroup);
+        });
 
-    // Delete task input dynamically
-    document.getElementById('tasks-container').addEventListener('click', function(event) {
-        if (event.target && event.target.classList.contains('delete-task')) {
-            event.target.closest('.task-input-group').remove();
-        }
+        // Delete task dynamically
+        $('#tasks-container').on('click', '.delete-task', function () {
+            $(this).closest('.task-input-group').remove();
+        });
+
+        // jQuery Validation Setup
+        $('#intern-form').validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                'task_title[]': {
+                    required: true
+                },
+                'task_description[]': {
+                    required: true
+                }
+            },
+            errorPlacement: function (error, element) {
+                if (element.attr("name") === "task_title[]" || element.attr("name") === "task_description[]") {
+                    error.addClass("text-red-500 text-sm");
+                    error.insertAfter(element);
+                } else {
+                    error.addClass("text-red-500 text-sm");
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element) {
+                $(element).addClass("border-red-500");
+            },
+            unhighlight: function (element) {
+                $(element).removeClass("border-red-500");
+            }
+        });
     });
 </script>
 @endsection

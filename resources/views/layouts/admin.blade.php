@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - @yield('title')</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/js/app.js', 'resources/js/bootstrap.js'])
+    <script src=
+"https://code.jquery.com/jquery-3.7.1.min.js" 
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
+        crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 </head>
 <body class="bg-gray-100">
 
@@ -32,6 +39,5 @@
             @yield('content')
         </main>
     </div>
-
 </body>
 </html>

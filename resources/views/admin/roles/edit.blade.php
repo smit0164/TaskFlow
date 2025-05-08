@@ -6,7 +6,7 @@
         <div class="max-w-2xl mx-auto bg-white p-8 rounded shadow-lg">
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Edit Role</h2>
 
-            <form action="{{ route('admin.roles.update', $role->id) }}" method="POST">
+            <form action="{{ route('admin.roles.update', $role->id) }}" method="POST" id="roleform">
                 @csrf
                 @method('PUT')
 
@@ -69,33 +69,61 @@
         </div>
     </div>
 
-    {{-- JavaScript for Select All and Show/Hide Permissions Section --}}
     <script>
-        document.getElementById('select-all').addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll('.permission-checkbox');
-            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-        });
-
-        // Toggle permissions visibility based on Super Admin checkbox
-        document.getElementById('is_super').addEventListener('change', function () {
-            const permissionsSection = document.getElementById('permissions-section');
-            const permissionCheckboxes = document.querySelectorAll('.permission-checkbox');
-            if (this.checked) {
-                // Disable permission checkboxes if Super Admin is selected
-                permissionCheckboxes.forEach(checkbox => checkbox.disabled = true);
-                permissionsSection.style.display = 'none';
-            } else {
-                // Enable permission checkboxes and show permissions section
-                permissionCheckboxes.forEach(checkbox => checkbox.disabled = false);
-                permissionsSection.style.display = 'block';
+    $(document).ready(function () {
+        // jQuery Validate
+        $("#roleform").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 3
+                },
+                "permissions[]": {
+                    required: function () {
+                        return !$('#is_super').is(":checked");
+                    }
+                }
+            },
+            messages: {
+                name: {
+                    required: "Role name is required.",
+                    minlength: "Role name must be at least 3 characters."
+                },
+                "permissions[]": {
+                    required: "Please select at least one permission or mark as Super Admin."
+                }
+            },
+            errorClass: "text-red-500 text-sm mt-1",
+            errorElement: "div",
+            errorPlacement: function(error, element) {
+                if (element.attr("name") === "permissions[]") {
+                    error.insertAfter($("#is_super").closest('div.mb-4'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function (element) {
+                $(element).addClass("border-red-500");
+            },
+            unhighlight: function (element) {
+                $(element).removeClass("border-red-500");
             }
         });
 
-        // Set initial visibility and checkbox states based on current state
-        if (document.getElementById('is_super').checked) {
-            document.getElementById('permissions-section').style.display = 'none';
-            const permissionCheckboxes = document.querySelectorAll('.permission-checkbox');
-            permissionCheckboxes.forEach(checkbox => checkbox.disabled = true);
-        }
-    </script>
+        // Toggle permission section on Super Admin checkbox change
+        $('#is_super').change(function () {
+            const permissionSection = $('#permissions-section');
+            const checkboxes = $('.permission-checkbox');
+
+            if (this.checked) {
+                permissionSection.hide();
+                checkboxes.prop('checked', false).prop('disabled', true);
+            } else {
+                permissionSection.show();
+                checkboxes.prop('disabled', false);
+            }
+        });
+    });
+</script>
+ 
 @endsection

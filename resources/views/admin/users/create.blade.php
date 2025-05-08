@@ -4,41 +4,41 @@
 
 @section('content')
 <div class="max-w-xl mx-auto mt-8 bg-white p-6 rounded shadow">
-    <form method="POST" action="{{ route('admin.users.store') }}">
+    <form id="add-user-form" method="POST" action="{{ route('admin.users.store') }}">
         @csrf
 
         <div class="mb-4">
-            <label>Name</label>
-            <input type="text" name="name" value="{{ old('name') }}" class="w-full border rounded px-3 py-2" >
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" value="{{ old('name') }}" class="w-full border rounded px-3 py-2">
             @error('name')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="mb-4">
-            <label>Email</label>
-            <input type="email" name="email" value="{{ old('email') }}" class="w-full border rounded px-3 py-2" >
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" value="{{ old('email') }}" class="w-full border rounded px-3 py-2">
             @error('email')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="mb-4">
-            <label>Password</label>
-            <input type="password" name="password" class="w-full border rounded px-3 py-2" >
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" class="w-full border rounded px-3 py-2">
             @error('password')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="mb-4">
-            <label>Confirm Password</label>
-            <input type="password" name="password_confirmation" class="w-full border rounded px-3 py-2">
+            <label for="password_confirmation">Confirm Password</label>
+            <input type="password" name="password_confirmation" id="password_confirmation" class="w-full border rounded px-3 py-2">
         </div>
 
         <div class="mb-4">
-            <label>Role</label>
-            <select name="role_id" class="w-full border rounded px-3 py-2">
+            <label for="role_id">Role</label>
+            <select name="role_id" id="role_id" class="w-full border rounded px-3 py-2">
                 <option value="">-- Select Role --</option>
                 @foreach($roles as $role)
                     <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
@@ -61,4 +61,66 @@
         </div>
     </form>
 </div>
+
+    
+    <script>
+        $(document).ready(function() {
+            $("#add-user-form").validate({
+                rules: {
+                    name: {
+                        required: true,
+                        minlength: 3
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    password: {
+                        required: true,
+                        minlength: 6
+                    },
+                    password_confirmation: {
+                        required: true,
+                        minlength: 6,
+                        equalTo: "#password"
+                    },
+                    role_id: {
+                        required: true
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "Name is required",
+                        minlength: "Name must be at least 3 characters long"
+                    },
+                    email: {
+                        required: "Email is required",
+                        email: "Please enter a valid email address"
+                    },
+                    password: {
+                        required: "Password is required",
+                        minlength: "Password must be at least 6 characters long"
+                    },
+                    password_confirmation: {
+                        required: "Please confirm your password",
+                        minlength: "Password confirmation must be at least 6 characters long",
+                        equalTo: "Password confirmation does not match"
+                    },
+                    role_id: {
+                        required: "Please select a role"
+                    }
+                },
+                errorClass: "text-red-500 text-sm mt-1",  // Error message styling
+                errorPlacement: function(error, element) {
+                    error.insertAfter(element);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass("border-red-500").removeClass("border-green-500"); // Highlight the input field with red border
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass("border-red-500").addClass("border-green-500"); // Remove red border and add green border
+                }
+            });
+        });
+    </script>
 @endsection

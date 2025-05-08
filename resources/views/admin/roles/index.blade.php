@@ -72,9 +72,9 @@
     </div>
 
 <!-- Delete Confirmation Modal -->
-<div id="delete-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex justify-center items-center z-50">
+<div id="delete-modal" class="fixed inset-5 bg-gray-900 bg-opacity-50 hidden flex justify-center items-center top-0 left-0 bottom-0 right-0 z-50 ">
     <div class="bg-white rounded-lg p-6 max-w-lg mx-auto">
-        <h3 class="text-xl font-semibold text-gray-800 mb-4">Are you sure you want to delete this role?</h3>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Are you sure you want to delete this roleawdwad?</h3>
         <p id="role-name" class="text-lg text-gray-800 mb-4"></p>
 
         <div class="flex justify-end space-x-4">
@@ -97,22 +97,23 @@
 {{-- JavaScript for Modal --}}
 <script>
     function openDeleteModal(roleId, roleName) {
-        // Set role name
-        document.getElementById('role-name').textContent = 'Role: ' + roleName;
-
-        // Set form action
-        const form = document.getElementById('delete-form');
-        form.action = '/admin/roles/' + roleId;
-
-        // Open the modal
-        document.getElementById('delete-modal').classList.remove('hidden');
+        $('#role-name').text('Role: ' + roleName);
+        $('#delete-form').attr('action', '/admin/roles/' + roleId);
+        $('#delete-modal').fadeIn();
     }
 
     function closeDeleteModal() {
-        // Close the modal
-        document.getElementById('delete-modal').classList.add('hidden');
+        $('#delete-modal').fadeOut();
     }
+
+    // Optional: Close modal on background click
+    $(document).on('click', function(e) {
+        if ($(e.target).is('#delete-modal')) {
+            closeDeleteModal();
+        }
+    });
 </script>
+
 
 
 @endsection

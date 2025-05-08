@@ -9,7 +9,7 @@
         <div class="max-w-2xl mx-auto bg-white p-8 rounded shadow-lg">
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Create New Role</h2>
 
-            <form action="{{ route('admin.roles.store') }}" method="POST">
+            <form action="{{ route('admin.roles.store') }}" method="POST" id="roleform">
                 @csrf
 
                 <!-- Role Name -->
@@ -73,23 +73,56 @@
         </div>
     </div>
 
-    {{-- JavaScript for Select All and Super Admin Toggle --}}
     <script>
-        document.getElementById('select-all').addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll('.permission-checkbox');
-            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-        });
-
-        document.getElementById('is_super').addEventListener('change', function () {
-            const permissionSection = document.getElementById('permissions-section');
-            permissionSection.style.display = this.checked ? 'none' : 'block';
-        });
-
-        // On page load, check if super admin was previously checked (e.g., after validation error)
-        window.addEventListener('DOMContentLoaded', () => {
-            if (document.getElementById('is_super').checked) {
-                document.getElementById('permissions-section').style.display = 'none';
+    $(document).ready(function () {
+        $("#roleform").validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 3
+                },
+                "permissions[]": {
+                    required: function () {
+                        return !$('#is_super').is(":checked");
+                    }
+                }
+            },
+            messages: {
+                name: {
+                    required: "Role name is required.",
+                    minlength: "Role name must be at least 3 characters."
+                },
+                "permissions[]": {
+                    required: "Please select at least one permission or mark as Super Admin."
+                }
+            },
+            errorClass: "text-red-500 text-sm mt-1",
+            errorElement: "div",
+            errorPlacement: function(error, element) {
+                if (element.attr("name") === "permissions[]") {
+                    // place the permission error below the Super Admin checkbox container
+                    error.insertAfter($("#is_super").closest('div.mb-4'));
+                } else {
+                    error.insertAfter(element);
+                }
+           },
+            highlight: function (element) {
+                $(element).addClass("border-red-500");
+            },
+            unhighlight: function (element) {
+                $(element).removeClass("border-red-500");
             }
         });
-    </script>
+
+        $('#is_super').change(function () {
+            if (this.checked) {
+                $("input[name='permissions[]']").prop('checked', false);
+            }
+            // Revalidate the permissions[] field
+            $("input[name='permissions[]']").first().valid();
+        });
+
+    });
+</script>
+
 @endsection

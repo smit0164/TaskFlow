@@ -7,7 +7,7 @@
     <div class="bg-white p-8 rounded-lg shadow w-full max-w-2xl mx-auto mt-6">
 
         <!-- Task Edit Form -->
-        <form action="{{ route('admin.tasks.update', $task->id) }}" method="POST" class="space-y-6">
+        <form action="{{ route('admin.tasks.update', $task->id) }}" method="POST" class="space-y-6" id="editTaskForm">
             @csrf
             @method('PUT')
 
@@ -91,11 +91,56 @@
 
     <!-- JavaScript to handle Select All functionality -->
     <script>
-        document.getElementById('selectAll').addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll('.intern-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
+    $(document).ready(function () {
+        // Select All checkbox functionality
+        $('#selectAll').on('change', function () {
+            $('.intern-checkbox').prop('checked', this.checked);
         });
-    </script>
+
+        $('#editTaskForm').validate({
+        rules: {
+            title: {
+                required: true,
+                minlength: 3
+            },
+            description: {
+                required: true,
+                minlength: 5
+            },
+            'assigned_to[]': {
+                required: true
+            }
+        },
+        messages: {
+            title: {
+                required: "Please enter a task title",
+                minlength: "Title must be at least 3 characters"
+            },
+            description: {
+                required: "Please enter a description",
+                minlength: "Description must be at least 5 characters"
+            },
+            'assigned_to[]': {
+                required: "Please select at least one intern"
+            }
+        },
+        errorClass: "text-red-600 text-sm mt-1",
+        errorPlacement: function (error, element) {
+            if (element.attr("name") === "assigned_to[]") {
+                error.insertAfter(element.closest('.space-y-2'));
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        highlight: function (element) {
+            $(element).addClass('border-red-600');
+        },
+        unhighlight: function (element) {
+            $(element).removeClass('border-red-600');
+        }
+});
+
+    });
+</script>
+
 @endsection

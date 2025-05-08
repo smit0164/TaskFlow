@@ -5,10 +5,8 @@
 
 @section('content')
     <div class="bg-white p-8 rounded-lg shadow w-full max-w-2xl mx-auto mt-6">
-    
-
         <!-- Task Creation Form -->
-        <form action="{{ route('admin.tasks.store') }}" method="POST" class="space-y-6">
+        <form id="taskForm" action="{{ route('admin.tasks.store') }}" method="POST" class="space-y-6">
             @csrf
 
             <!-- Task Title Input Field -->
@@ -19,9 +17,8 @@
                     id="title" 
                     name="title" 
                     value="{{ old('title') }}"
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent input-field" 
                     placeholder="Enter task title"
-                
                 >
                 @error('title')
                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -35,9 +32,8 @@
                     id="description" 
                     name="description" 
                     rows="4"
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent input-field" 
                     placeholder="Enter task description"
-                    
                 >{{ old('description') }}</textarea>
                 @error('description')
                     <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
@@ -93,11 +89,74 @@
 
     <!-- JavaScript to handle Select All functionality -->
     <script>
-        document.getElementById('selectAll').addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll('.intern-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = this.checked;
-            });
+    document.getElementById('selectAll').addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('.intern-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
         });
-    </script>
+    });
+
+    $(document).ready(function () {
+        $("#taskForm").validate({
+            rules: {
+                title: {
+                    required: true,
+                    minlength: 5
+                },
+                description: {
+                    required: true,
+                    minlength: 10
+                },
+                'assigned_to[]': {
+                    required: true,
+                    minlength: 1
+                }
+            },
+            messages: {
+                title: {
+                    required: "Please enter a task title",
+                    minlength: "Title must be at least 5 characters long"
+                },
+                description: {
+                    required: "Please enter a task description",
+                    minlength: "Description must be at least 10 characters long"
+                },
+                'assigned_to[]': {
+                    required: "Please assign at least one intern"
+                }
+            },
+            errorClass: "text-sm text-red-600 mt-1",
+            errorElement: "p",
+
+            highlight: function (element) {
+                $(element).addClass('border-red-500').removeClass('border-blue-500');
+            },
+            unhighlight: function (element) {
+                $(element).removeClass('border-red-500').addClass('border-blue-500');
+            },
+            errorPlacement: function (error, element) {
+                if (element.attr("name") == "assigned_to[]") {
+                    error.insertAfter(element.closest('.space-y-2'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            submitHandler: function (form) {
+                form.submit();
+            }
+        });
+
+        $('.input-field').on('focus', function () {
+            $(this).addClass('border-blue-500');
+        }).on('blur', function () {
+            if (!$(this).valid()) {
+                $(this).removeClass('border-blue-500');
+            }
+        });
+    });
+</script>
+
+
+   
 @endsection
+

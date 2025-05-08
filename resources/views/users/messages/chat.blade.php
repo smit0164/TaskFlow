@@ -1,133 +1,164 @@
 @extends('layouts.intern')
 
 @section('content')
-<div class="container mx-auto px-4 py-8 max-w-3xl">
+<div class="container mx-auto px-4 py-8 max-w-3xl min-h-screen flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Chat with {{ $admin->name }}</h1>
-        <a href="{{ route('intern.dashbaord')}}" class="text-blue-600 hover:underline">Back to Dashboard</a>
+        <h1 class="text-3xl font-semibold text-gray-800">Chat with {{ $admin->name }}</h1>
+        <a href="{{ route('intern.dashboard') }}" class="text-sm text-blue-600 hover:underline">← Back to Dashboard</a>
     </div>
 
     <!-- Admin Details -->
-    <div class="bg-white shadow-sm rounded-lg p-4 mb-6">
-        <p class="text-lg font-medium text-gray-700">Name: {{ $admin->name }}</p>
-        <p class="text-lg text-gray-600">Email: {{ $admin->email }}</p>
+    <div class="bg-white border border-gray-200 shadow rounded-lg p-4 mb-6">
+        <p class="text-lg font-semibold text-gray-800">Name: <span class="font-normal">{{ $admin->name }}</span></p>
+        <p class="text-lg font-semibold text-gray-800">Email: <span class="font-normal">{{ $admin->email }}</span></p>
     </div>
 
-    <!-- Chat Box -->
-    <div id="chat-box" class="bg-white shadow-md rounded-lg p-6 max-h-96 overflow-y-auto mb-4">
-        <!-- Messages will be inserted here via AJAX -->
+    <!-- Chat Messages Box -->
+    <div id="chat-box" class="bg-gray-50 shadow-inner border border-gray-200 rounded-lg p-4 overflow-y-auto flex-1 mb-4 space-y-3 max-h-[400px]">
+        <!-- Messages will be dynamically loaded here -->
     </div>
 
-    <!-- Message Form -->
-    <form id="messageForm" class="flex gap-3">
+    <!-- Message Input -->
+    <form id="messageForm"
+          action="{{ route('intern.messages.store') }}"
+          method="POST"
+          class="bg-white shadow-lg rounded-lg border border-gray-200 px-4 py-3 flex items-center gap-3 sticky bottom-0"
+          data-admin-id="{{ $admin->id }}"
+          data-intern-id="{{ auth()->guard('intern')->id() }}">
         @csrf
         <input type="hidden" name="admin_id" value="{{ $admin->id }}">
         <input type="hidden" name="intern_id" value="{{ auth()->guard('intern')->id() }}">
         <input type="hidden" name="sender_type" value="intern">
 
-        <label for="messageInput" class="sr-only">Type your message</label>
-        <input type="text" name="message" id="messageInput" placeholder="Type your message..."
-               class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+        <input type="text" name="message" id="messageInput"
+               placeholder="Type your message..."
+               class="flex-1 bg-gray-100 text-gray-800 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"/>
 
-        <button type="submit" id="sendButton" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition disabled:opacity-50">
+        <button type="submit" id="sendButton"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full transition focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
             Send
         </button>
     </form>
 </div>
 
-<!-- JavaScript for AJAX -->
+
+<!-- JavaScript for AJAX and Broadcasting -->
 <script>
-    const chatBox = document.getElementById('chat-box');
-    const form = document.getElementById('messageForm');
-    const sendButton = document.getElementById('sendButton');
-    const messageInput = document.getElementById('messageInput');
-    const adminId = "{{ $admin->id }}";
-    const fetchUrl = "{{ route('intern.messages.fetch', ['admin_id' => $admin->id]) }}";
-    const storeUrl = "{{ route('intern.messages.store') }}";
+$(document).ready(function () {
+    console.log('intern-chat.js is running, window.Echo:', window.Echo);
 
-    // Format timestamp as relative time
-    function timeAgo(dateString) {
-        const now = new Date();
-        const messageDate = new Date(dateString);
-        const diffInSeconds = Math.floor((now - messageDate) / 1000);
-
-        if (diffInSeconds < 60) {
-            return diffInSeconds <= 10 ? 'just now' : `${diffInSeconds} seconds ago`;
-        } else if (diffInSeconds < 3600) {
-            const minutes = Math.floor(diffInSeconds / 60);
-            return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
-        } else if (diffInSeconds < 86400) {
-            const hours = Math.floor(diffInSeconds / 3600);
-            return `${hours} hour${hours === 1 ? '' : 's'} ago`;
-        } else {
-            return messageDate.toLocaleString([], { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                day: '2-digit', 
-                month: 'short', 
-                year: 'numeric' 
-            });
-        }
+    if (!window.Echo) {
+        console.error('window.Echo is undefined. Ensure echo.js initializes Echo.');
+        return;
     }
+
+    const $chatBox = $('#chat-box');
+    const $form = $('#messageForm');
+    const $sendButton = $('#sendButton');
+    const $messageInput = $('#messageInput');
+
+    if (!$chatBox.length || !$form.length || !$sendButton.length || !$messageInput.length) {
+        console.error('DOM elements missing:', {
+            chatBox: $chatBox[0],
+            form: $form[0],
+            sendButton: $sendButton[0],
+            messageInput: $messageInput[0]
+        });
+        return;
+    }
+
+    const adminId = $form.data('admin-id');
+    const internId = $form.data('intern-id');
 
     // Fetch messages
     function fetchMessages() {
-        fetch(fetchUrl)
-            .then(response => response.json())
-            .then(data => {
-                chatBox.innerHTML = '';
-                data.forEach(message => {
-                    const isAdmin = message.sender_type === 'admin';
-                    const bubble = `
-                        <div class="flex ${isAdmin ?  'justify-start' :'justify-end'} mb-4">
-                            <div class="${isAdmin ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'} p-3 rounded-lg max-w-xs sm:max-w-sm">
-                                <p>${message.message}</p>
-                                <p class="text-xs mt-1 opacity-70">${timeAgo(message.created_at)}</p>
-                            </div>
-                        </div>`;
-                    chatBox.innerHTML += bubble;
-                });
-                chatBox.scrollTop = chatBox.scrollHeight;
-            })
-            .catch(error => console.error('Error fetching messages:', error));
+        console.log('Fetching messages for adminId:', adminId, 'internId:', internId);
+
+        $.ajax({
+            url: `/intern/messages/fetch?admin_id=${adminId}&intern_id=${internId}`,
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': $('input[name="_token"]').val()
+            },
+            success: function (data) {
+                console.log('Fetch response:', data);
+                if (data.success && data.messages) {
+                    $chatBox.empty();
+                    data.messages.forEach(function (message) {
+                        const isIntern = message.sender_type === 'intern';
+                        const bubble = `
+                            <div class="flex ${isIntern ? 'justify-end' : 'justify-start'} mb-4">
+                                <div class="${isIntern ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'} p-3 rounded-lg max-w-xs sm:max-w-sm">
+                                    <p>${message.message}</p>
+                                    <p class="text-[11px] ${isIntern ? 'text-blue-200' : 'text-gray-500'} text-right mt-1">${message.time}</p>
+                                </div>
+                            </div>`;
+                        $chatBox.append(bubble);
+                    });
+                    $chatBox.scrollTop($chatBox[0].scrollHeight);
+                } else {
+                    console.warn('No messages or unsuccessful response:', data);
+                }
+            },
+            error: function (error) {
+                console.error('Error fetching messages:', error);
+            }
+        });
     }
 
-    // Initial fetch and periodic polling
-    fetchMessages();
-    setInterval(fetchMessages, 2000);
-
     // Submit message via AJAX
-    form.addEventListener('submit', function(e) {
+    $form.on('submit', function (e) {
         e.preventDefault();
-        if (!messageInput.value.trim()) return; // Prevent empty messages
+        if (!$messageInput.val().trim()) return;
 
-        sendButton.disabled = true;
-        const formData = new FormData(form);
+        $sendButton.prop('disabled', true);
 
-        fetch(storeUrl, {
-            method: 'POST',
+        const formData = new FormData(this);
+
+        $.ajax({
+            url: $form.attr('action'),
+            type: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                'X-CSRF-TOKEN': $('input[name="_token"]').val()
             },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            messageInput.value = '';
-            sendButton.disabled = false;
-            fetchMessages();
-        })
-        .catch(error => {
-            console.error('Error sending message:', error);
-            sendButton.disabled = false;
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $messageInput.val('');
+                $sendButton.prop('disabled', false);
+                fetchMessages();
+            },
+            error: function (error) {
+                console.error('Error sending message:', error);
+                $sendButton.prop('disabled', false);
+            }
         });
     });
 
+    // Real-time message listener
+    const channelName = `private-chat.admin-${adminId}.intern-${internId}`;
+    console.log('Setting up listener for channel INTERN: ', channelName);
+
+    window.Echo.private(channelName)
+        .listen('.MessageSent', function (e) {
+            console.log("Message received event triggered:", e);
+            fetchMessages();
+        })
+        .error(function (error) {
+            console.error("Echo error:", error);
+        });
+
     // Auto-resize input
-    messageInput.addEventListener('input', function() {
+    $messageInput.on('input', function () {
         this.style.height = 'auto';
         this.style.height = `${this.scrollHeight}px`;
     });
+
+    // Initial fetch
+    fetchMessages();
+});
 </script>
+
 @endsection

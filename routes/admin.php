@@ -9,7 +9,7 @@ use App\Http\Controllers\Comment\CommentController;
 use App\Http\Controllers\Admin\InternController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ManageUserController;
-use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\MessageController;
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
         Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
@@ -67,13 +67,11 @@ Route::middleware('auth:admin')->group(function(){
     });
     
     
-    Route::prefix('admin/messages')->name('admin.messages.')->group(function () {
-        Route::get('/', [MessageController::class, 'index'])->name('index');
-        Route::get('/chat/intern/{id}', [MessageController::class, 'openChat'])->name('chat');
-        Route::post('/store', [MessageController::class, 'store'])->name('store');
-        Route::get('/fetch/{intern_id}', [MessageController::class, 'fetch'])->name('fetch');
-    });
-    
+   
+    Route::get('admin/message', [MessageController::class, 'index'])->name('admin.messages.index');
+    Route::get('admin/message/chat/intern/{id}', [MessageController::class, 'openChatAdminIntern'])->name('admin.message.chat');
+    Route::post('admin/messages', [MessageController::class, 'store'])->name('admin.messages.store');
+    Route::get('admin/messages/fetch', [MessageController::class, 'fetchMessages'])->name('admin.messages.fetch');
 
     Route::middleware(['can:manage-users'])->prefix('admin/users')->name('admin.users.')->group(function () {
         Route::get('/', [ManageUserController::class, 'index'])->name('index');
