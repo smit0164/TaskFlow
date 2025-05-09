@@ -1,29 +1,35 @@
 @extends('layouts.admin')
 
-@section('title', 'Chat')
-@section('heading', 'Chat with intern')
+@section('title', 'TaskFlow – Chat with Intern')
+@section('heading', 'Chat with Intern')
 
 @section('content')
-<div class="container mx-auto px-4 py-8 max-w-4xl">
+<div class="w-full max-w-xl mx-auto  min-h-screen flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl sm:text-3xl font-semibold text-gray-900">Chat with <span class="text-blue-600">{{ $intern->name }}</span></h1>
+        <h1 class="text-3xl font-bold text-indigo-700 flex items-center">
+            <i class="fas fa-comments mr-2 text-indigo-600"></i>
+            Chat with {{ $intern->name }}
+        </h1>
         <a href="{{ route('admin.messages.index') }}"
-           class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out">
-            ← Back to Messages
+           class="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-300 hover:shadow-sm transition duration-200 flex items-center">
+            <i class="fas fa-arrow-left mr-1"></i> Back
         </a>
     </div>
 
     <!-- Intern Details -->
-    <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-5 mb-6">
-        <div class="text-gray-800 font-medium mb-1">Intern Details</div>
-        <p class="text-gray-700 text-sm"><strong>Name:</strong> {{ $intern->name }}</p>
-        <p class="text-gray-700 text-sm"><strong>Email:</strong> {{ $intern->email }}</p>
+    <div class="bg-white border border-gray-200 shadow-md rounded-xl p-4 mb-6">
+        <div class="flex items-center border-b border-indigo-100 pb-2 mb-2">
+            <i class="fas fa-user-circle text-3xl text-indigo-600 mr-3"></i>
+            <h2 class="text-lg font-semibold text-gray-800">Intern Details</h2>
+        </div>
+        <p class="text-sm text-gray-700">Name: <span class="font-medium">{{ $intern->name }}</span></p>
+        <p class="text-sm text-gray-700">Email: <span class="font-medium">{{ $intern->email }}</span></p>
     </div>
 
-    <!-- Chat Box -->
+    <!-- Chat Messages Box -->
     <div id="chat-box"
-         class="bg-gray-50 border border-gray-200 rounded-lg p-4 h-[500px] overflow-y-auto space-y-2 mb-6 shadow-sm">
+         class="bg-gradient-to-b from-gray-50 to-gray-100 shadow-inner border border-gray-200 rounded-xl p-6 overflow-y-auto flex-1 mb-4 space-y-4 max-h-[500px]">
         <!-- Messages will be rendered here -->
     </div>
 
@@ -31,7 +37,7 @@
     <form id="messageForm"
           action="{{ route('admin.messages.store') }}"
           method="POST"
-          class="flex items-end gap-2"
+          class="bg-white shadow-md rounded-full border border-gray-200 px-4 py-3 flex items-center gap-3 sticky bottom-0"
           data-admin-id="{{ auth()->guard('admin')->id() }}"
           data-intern-id="{{ $intern->id }}">
 
@@ -40,23 +46,28 @@
         <input type="hidden" name="intern_id" value="{{ $intern->id }}">
         <input type="hidden" name="sender_type" value="admin">
 
-       
-        <input type="text" 
-            name="message"
-            id="messageInput"
-            rows="1"
-            placeholder="Type your message..."
-            class=" w-full resize-none px-4 py-2 text-sm border border-gray-300 rounded-lg shadow-sm bg-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-        />
-        
+        <input type="text" name="message" id="messageInput"
+               placeholder="Type your message..."
+               class="flex-1 bg-white text-gray-800 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none"/>
 
-        <button type="submit"
-                id="sendButton"
-                class="bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition">
-            Send
+        <button type="submit" id="sendButton"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full transition focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 hover:scale-105 transform">
+            <i class="fas fa-paper-plane"></i>
         </button>
     </form>
 </div>
+
+<style>
+    /* Fade animation for messages */
+    .animate-fade {
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 
 <script>
 $(document).ready(function () {
@@ -84,10 +95,10 @@ $(document).ready(function () {
                     data.messages.forEach(function (message) {
                         const isAdmin = message.sender_type === 'admin';
                         const bubble = `
-                            <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'} animate-fade-in">
-                                <div class="${isAdmin ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'} px-4 py-2 rounded-lg max-w-xs sm:max-w-md shadow-sm">
-                                    <p class="text-sm">${message.message}</p>
-                                    <p class="text-[11px] ${isAdmin ? 'text-blue-200' : 'text-gray-500'} text-right mt-1">${message.time}</p>
+                            <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'} mb-4 animate-fade">
+                                <div class="${isAdmin ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'} p-3 rounded-lg max-w-xs sm:max-w-sm">
+                                    <p>${message.message}</p>
+                                    <p class="text-[11px] ${isAdmin ? 'text-indigo-200' : 'text-gray-500'} text-right mt-1">${message.time}</p>
                                 </div>
                             </div>`;
                         $chatBox.append(bubble);
@@ -120,7 +131,6 @@ $(document).ready(function () {
             contentType: false,
             success: function () {
                 $messageInput.val('');
-                $messageInput.css('height', 'auto');
                 $sendButton.prop('disabled', false);
                 fetchMessages();
             },
@@ -138,9 +148,7 @@ $(document).ready(function () {
             .error(console.error);
     }
 
-
     fetchMessages();
 });
 </script>
-
 @endsection

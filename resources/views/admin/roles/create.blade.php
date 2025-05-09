@@ -1,5 +1,3 @@
-<!-- resources/views/admin/role/create.blade.php -->
-
 @extends('layouts.admin')
 @section('title', 'Add Roles')
 @section('heading', 'Add New Roles')
@@ -12,7 +10,7 @@
             <form action="{{ route('admin.roles.store') }}" method="POST" id="roleform">
                 @csrf
 
-                <!-- Role Name -->
+                
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700">Role Name</label>
                     <input type="text" name="name" id="name"
@@ -23,7 +21,7 @@
                     @enderror
                 </div>
 
-                <!-- Super Admin Checkbox -->
+        
                 <div class="mb-4">
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" id="is_super" name="is_super" value="1"
@@ -36,11 +34,6 @@
                 <div class="mb-4" id="permissions-section">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
 
-                    <!-- Select All Checkbox -->
-                    <div class="flex items-center mb-2">
-                        <input type="checkbox" id="select-all" class="mr-2">
-                        <label for="select-all" class="text-sm font-semibold text-gray-700">Select All</label>
-                    </div>
 
                     <div class="space-y-2">
                         @foreach($permissions as $permission)
@@ -100,7 +93,6 @@
             errorElement: "div",
             errorPlacement: function(error, element) {
                 if (element.attr("name") === "permissions[]") {
-                    // place the permission error below the Super Admin checkbox container
                     error.insertAfter($("#is_super").closest('div.mb-4'));
                 } else {
                     error.insertAfter(element);
@@ -114,13 +106,15 @@
             }
         });
 
-        $('#is_super').change(function () {
+       $('#is_super').change(function () {
             if (this.checked) {
                 $("input[name='permissions[]']").prop('checked', false);
+                $("input[name='permissions[]']").prop('disabled', true);
+            } else {
+                $("input[name='permissions[]']").prop('disabled', false);
             }
-            // Revalidate the permissions[] field
-            $("input[name='permissions[]']").first().valid();
         });
+
 
     });
 </script>

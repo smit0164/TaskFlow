@@ -6,12 +6,9 @@
     <title>Admin - @yield('title')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @vite(['resources/js/app.js', 'resources/js/bootstrap.js'])
-    <script src=
-"https://code.jquery.com/jquery-3.7.1.min.js" 
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
-        crossorigin="anonymous">
-    </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
 </head>
 <body class="bg-gray-100">
 

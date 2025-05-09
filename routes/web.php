@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\Users\UserAuthController;
 use App\Http\Controllers\Dashboard\UsersDashboardController;
 use App\Http\Controllers\Comment\CommentController;
 use App\Http\Controllers\MessageController;
-
+use App\Http\Controllers\Users\TaskController;
 
 
 
@@ -27,5 +27,7 @@ Route::middleware("auth:intern")->group(function(){
     
     Route::get('/intern/messages/fetch', [MessageController::class, 'fetchMessages'])->name('intern.messages.fetch');
     Route::post('intern/messages', [MessageController::class, 'store'])->name('intern.messages.store');
+
+    Route::get('/intern/tasks/{task}', [TaskController::class, 'show'])->name('intern.task.show');
 });
 require __DIR__ . '/admin.php';

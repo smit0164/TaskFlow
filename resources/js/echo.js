@@ -14,10 +14,6 @@ window.Echo = new Echo({
     encrypted: false,
     disableStats: true,
     enabledTransports: ['ws', 'wss'],
-
-
-    cluster: 'mt1',
-    authEndpoint: '/broadcasting/auth',
     auth: {
         headers: {
             'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),

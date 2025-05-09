@@ -59,10 +59,6 @@
     </form>
 </div>
 
-{{-- jQuery and Validation --}}
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-
 <script>
     $(document).ready(function () {
         // Add task dynamically
@@ -97,21 +93,10 @@
                     required: true,
                     email: true
                 },
-                'task_title[]': {
-                    required: true
-                },
-                'task_description[]': {
-                    required: true
-                }
             },
             errorPlacement: function (error, element) {
-                if (element.attr("name") === "task_title[]" || element.attr("name") === "task_description[]") {
                     error.addClass("text-red-500 text-sm");
                     error.insertAfter(element);
-                } else {
-                    error.addClass("text-red-500 text-sm");
-                    error.insertAfter(element);
-                }
             },
             highlight: function (element) {
                 $(element).addClass("border-red-500");
@@ -120,6 +105,37 @@
                 $(element).removeClass("border-red-500");
             }
         });
+        $('#intern-form').on('submit', function (e) {
+           let isValid = true;
+
+            $('.task-input-group').each(function () {
+                const title = $(this).find('input[name="task_title[]"]');
+                const desc = $(this).find('textarea[name="task_description[]"]');
+
+                title.removeClass('border-red-500');
+                desc.removeClass('border-red-500');
+                $(this).find('.task-error').remove();
+
+                if (title.val().trim() && !desc.val().trim()) {
+                    desc.addClass('border-red-500');
+                    desc.after('<span class="text-red-500 text-sm task-error">Description is required if title is entered</span>');
+                    isValid = false;
+                }
+
+                if (!title.val().trim() && desc.val().trim()) {
+                    title.addClass('border-red-500');
+                    title.after('<span class="text-red-500 text-sm task-error">Title is required if description is entered</span>');
+                    isValid = false;
+                }
+                
+            });
+            if (!isValid) {
+                e.preventDefault(); // Prevent form submission
+            }
+            
+        });
+       
+
     });
 </script>
 @endsection

@@ -52,9 +52,11 @@
         </div>
 
         <div class="flex justify-end items-center space-x-4 mt-6">
-            <a href="{{ route('admin.users.index') }}" class="text-gray-600 hover:text-red-500 transition font-medium">
+            <a href="{{ route('admin.users.index') }}"
+             class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring focus:ring-gray-200">
                 Cancel
             </a>
+
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-md transition">
                 Create User
             </button>

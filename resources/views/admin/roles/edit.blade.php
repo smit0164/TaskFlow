@@ -31,12 +31,6 @@
                 <div class="mb-4" id="permissions-section">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
 
-                    <!-- Select All Checkbox -->
-                    <div class="flex items-center mb-2">
-                        <input type="checkbox" id="select-all" class="mr-2">
-                        <label for="select-all" class="text-sm font-semibold text-gray-700">Select All</label>
-                    </div>
-
                     <div class="space-y-2">
                         @foreach($permissions as $permission)
                             <div class="flex items-center">
@@ -111,16 +105,12 @@
         });
 
         // Toggle permission section on Super Admin checkbox change
-        $('#is_super').change(function () {
-            const permissionSection = $('#permissions-section');
-            const checkboxes = $('.permission-checkbox');
-
+       $('#is_super').change(function () {
             if (this.checked) {
-                permissionSection.hide();
-                checkboxes.prop('checked', false).prop('disabled', true);
+                $("input[name='permissions[]']").prop('checked', false);
+                $("input[name='permissions[]']").prop('disabled', true);
             } else {
-                permissionSection.show();
-                checkboxes.prop('disabled', false);
+                $("input[name='permissions[]']").prop('disabled', false);
             }
         });
     });

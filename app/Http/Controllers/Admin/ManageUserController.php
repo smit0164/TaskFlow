@@ -9,10 +9,9 @@ use App\Models\Role;
 
 class ManageUserController extends Controller
 {
-    // Show all users
     public function index()
     {
-        $users = Admin::with('role')->get(); // Assuming user has a 'role' relationship
+        $users = Admin::with('role')->get();
         return view('admin.users.index', compact('users'));
     }
 

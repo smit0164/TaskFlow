@@ -78,7 +78,12 @@
 
             <!-- Buttons for Cancel and Submit -->
             <div class="flex justify-end items-center space-x-4">
-                <a href="{{ route('admin.tasks.index') }}" class="text-gray-600 hover:text-blue-600 underline">Cancel</a>
+                <a 
+                    href="{{ route('admin.tasks.index') }}" 
+                    class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg shadow hover:bg-gray-300 transition duration-200"
+                >
+                    Cancel
+                </a>
                 <button 
                     type="submit" 
                     class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-200"

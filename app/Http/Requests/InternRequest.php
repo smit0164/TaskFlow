@@ -17,17 +17,16 @@ class InternRequest extends FormRequest
             'email' => 'required|email|unique:interns,email',
         ];
 
-        // Update case: ignore unique validation for current intern
         if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $internId = $this->route('id'); // or $this->intern if using route model binding
+            $internId = $this->route('id'); 
             $rules['email'] = 'required|email|unique:interns,email,' . $internId;
             $rules['password'] = 'nullable|string|min:6';
         } else {
             // Store case
-            $rules['task_title'] = 'required|array';
-            $rules['task_title.*'] = 'required|string|max:255';
-            $rules['task_description'] = 'required|array';
-            $rules['task_description.*'] = 'required|string|max:1000';
+            $rules['task_title'] = 'nullable|array';
+            $rules['task_title.*'] = 'nullable|string|max:255';
+            $rules['task_description'] = 'nullable|array';
+            $rules['task_description.*'] = 'nullable|string|max:1000';
         }
 
         return $rules;

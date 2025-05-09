@@ -2,91 +2,47 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto py-8">
-
     @if($tasks->count())
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             @foreach($tasks as $task)
-                <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow duration-300 flex flex-col">
-                    <!-- Task Header -->
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold text-gray-800">{{ $task->title }}</h2>
-                        <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">Task ID: {{ $task->id }}</span>
-                    </div>
-
-                    <!-- Task Description -->
-                    <p class="text-sm text-gray-600 leading-relaxed mb-4">{{ Str::limit($task->description, 150) }}</p>
-
-                    <!-- Created By -->
-                    <div class="text-sm text-gray-500 mb-4">
-                        <span class="font-medium">Created By:</span>
-                        {{ $task->createdBy ? $task->createdBy->name : 'No Admin Found' }}
-                    </div>
-
-                    <!-- Comment Form (For Authenticated Interns) -->
-                    @if (auth()->guard('intern')->check())
-                        <div class="border-t border-gray-200 pt-4 mt-4">
-                            <form action="{{ route('intern.comment.store') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="task_id" value="{{ $task->id }}">
-                                <input type="hidden" name="user_type" value="intern">
-
-                                <label for="description_{{ $task->id }}" class="block text-sm font-medium text-gray-700 mb-2">Add a Comment</label>
-                                <div class="relative">
-                                    <textarea name="description" id="description_{{ $task->id }}" rows="3" placeholder="Write your comment..."
-                                        class="w-full p-3 border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                                        required></textarea>
-                                </div>
-
-                                @error('description')
-                                    <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
-                                @enderror
-
-                                <div class="mt-3 text-right">
-                                    <button type="submit"
-                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center space-x-2">
-                                        <span>Post Comment</span>
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    @endif
-
-                    <!-- Comments Display -->
-                    <div class="mt-6">
-                        <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center space-x-2">
-                            <svg class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5v-4a2 2 0 012-2h10a2 2 0 012 2v4h-4m-6 0h6"></path>
+                <a href="{{ route('intern.task.show', $task->id) }}" 
+                   class="block bg-white rounded-lg p-5 border border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex flex-col space-y-3">
+                        <!-- Task Title with Icon -->
+                        <div class="flex items-center space-x-2">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
-                            <span>Comments</span>
-                        </h4>
-                        @forelse($task->comments as $comment)
-                            <div class="bg-gray-50 p-4 rounded-lg mb-3 border border-gray-100 shadow-sm">
-                                <p class="text-sm text-gray-700 leading-relaxed">{{ $comment->description }}</p>
-                                <div class="flex items-center justify-between mt-2">
-                                    <p class="text-xs text-gray-500">
-                                        <span class="font-medium">{{ $comment->commenter ? $comment->commenter->name : 'Deleted User' }}</span>
-                                        @if ($comment->isAdminComment())
-                                            <span class="inline-block bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full ml-2">Admin</span>
-                                        @else
-                                            <span class="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded-full ml-2">Intern</span>
-                                        @endif
-                                    </p>
-                                    <p class="text-xs text-gray-400">{{ $comment->created_at->format('M d, Y H:i') }}</p>
-                                </div>
-                            </div>
-                        @empty
-                            <p class="text-sm text-gray-500 italic">No comments yet.</p>
-                        @endforelse
+                            <h2 class="text-base font-semibold text-gray-800 truncate">{{ $task->title }}</h2>
+                        </div>
+                        <!-- Admin Name with Icon -->
+                        <div class="flex items-center space-x-2">
+                            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span class="text-sm text-gray-500">
+                                {{ $task->createdBy ? $task->createdBy->name : 'No Admin Found' }}
+                            </span>
+                        </div>
+                        <!-- Show Details Button -->
+                        <div class="text-center">
+                            <button type="button" 
+                                    onclick="window.location='{{ route('intern.task.show', $task->id) }}'"
+                                    class="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-200">
+                                <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                Show Details
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
     @else
-        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm text-center">
-            <p class="text-gray-600 text-sm">You have no assigned tasks at the moment.</p>
+        <div class="bg-white rounded-lg p-5 border border-gray-100 text-center">
+            <p class="text-gray-500 text-sm">You have no assigned tasks at the moment.</p>
         </div>
     @endif
 </div>

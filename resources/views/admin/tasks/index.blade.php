@@ -43,9 +43,15 @@
                                 @endforeach
                             </td>
                             <td class="py-3 text-center">
-                                <a href="{{ route('admin.tasks.edit', $task->id) }}" class="text-blue-600 hover:underline">Edit</a>
-                                <!-- Delete Button -->
-                                <button onclick="openDeleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')" class="text-red-600 hover:underline ml-4">Delete</button>
+                                <a href="{{ route('admin.tasks.edit', $task->id) }}" 
+                                    class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md text-sm transition">
+                                    Edit
+                                </a>
+
+                                <button onclick="openDeleteModal({{ $task->id }}, '{{ addslashes($task->title) }}')" 
+                                    class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md text-sm ml-2 transition">
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     @endforeach
@@ -59,8 +65,7 @@
 <!-- Modal for Deleting Task -->
 <div id="deleteModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden z-50 flex justify-center items-center">
     <div class="bg-white p-6 rounded-lg w-1/3 max-w-md">
-        <h3 id="modalTitle" class="text-lg font-semibold mb-4">Are you sure you want to delete this task?</h3>
-        <p id="taskName" class="mb-4 text-gray-800 font-medium"></p> <!-- Task Name Here -->
+        <h3 id="modalTitle" class="text-lg font-semibold mb-4"></h3>
         <form id="deleteForm" action="" method="POST">
             @csrf
             @method('DELETE')
@@ -80,12 +85,7 @@
         const modal = document.getElementById('deleteModal');
         modal.classList.remove('hidden');
         const form = document.getElementById('deleteForm');
-        form.action = `/admin/tasks/${taskId}`;  // Update the form action to the delete route
-        
-        // Set the task name in the modal
-        document.getElementById('taskName').textContent = `"${taskTitle}"`;
-
-        // Set modal title dynamically
+        form.action = `/admin/tasks/${taskId}`; 
         document.getElementById('modalTitle').textContent = `Are you sure you want to delete the task "${taskTitle}"?`;
     }
 

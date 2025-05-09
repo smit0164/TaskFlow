@@ -1,15 +1,12 @@
 @extends('layouts.admin')
-
 @section('title', 'Add Task')
 @section('heading', 'Add New Task')
 
 @section('content')
     <div class="bg-white p-8 rounded-lg shadow w-full max-w-2xl mx-auto mt-6">
-        <!-- Task Creation Form -->
+        
         <form id="taskForm" action="{{ route('admin.tasks.store') }}" method="POST" class="space-y-6">
             @csrf
-
-            <!-- Task Title Input Field -->
             <div>
                 <label for="title" class="block text-sm font-semibold text-gray-700">Task Title</label>
                 <input 
@@ -76,7 +73,12 @@
 
             <!-- Buttons for Cancel and Submit -->
             <div class="flex justify-end items-center space-x-4">
-                <a href="{{ route('admin.tasks.index') }}" class="text-gray-600 hover:text-blue-600 underline">Cancel</a>
+                <a 
+                    href="{{ route('admin.tasks.index') }}" 
+                    class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg shadow hover:bg-gray-300 transition duration-200"
+                >
+                    Cancel
+                </a>
                 <button 
                     type="submit" 
                     class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-200"
@@ -84,17 +86,15 @@
                     Create Task
                 </button>
             </div>
+
         </form>
     </div>
 
     <!-- JavaScript to handle Select All functionality -->
     <script>
-    document.getElementById('selectAll').addEventListener('change', function () {
-        const checkboxes = document.querySelectorAll('.intern-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
+    $('#selectAll').on('change', function () {
+            $('.intern-checkbox').prop('checked', this.checked);
         });
-    });
 
     $(document).ready(function () {
         $("#taskForm").validate({
